@@ -1,0 +1,45 @@
+body {
+      font-family: "Helvetica Neue", "Arial", sans-serif;
+      line-height: 1.6em;
+      margin: 0;
+  }
+  
+  header {
+      background: #606060;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-size: 2em;
+  }
+  
+  .contenu {
+      display: flex;
+      background: #f0f0f0; /* Couleur de fond grise */
+  }
+  
+  nav {
+      width: 200px; /* Ajustez la largeur du menu selon vos besoins */
+      padding: 10px;
+  }
+  
+  article {
+      flex: 1;
+      padding: 10px;
+  }
+  
+  /* Style pour les liens de la navigation */
+  nav a {
+      display: block;
+      padding: 5px;
+      margin-bottom: 5px;
+      text-decoration: none;
+      color: #333;
+      background: #ddd;
+  }
+  
+  /* Style pour les liens actifs */
+  nav a.clic {
+      background: #606060;
+      color: white;
+  }
+  
