@@ -1,0 +1,23 @@
+{
+    "require": {
+        "twig/twig": "^3.8",
+        "symfony/yaml": "^6.0",
+        "symfony/finder": "^6.0",
+        "symfony/routing": "^6.0",
+        "symfony/process": "^6.0",
+        "symfony/var-dumper": "^6.0",
+        "symfony/http-kernel": "^6.0",
+        "symfony/filesystem": "^6.0",
+        "symfony/polyfill-php72": "^1.28",
+        "symfony/polyfill-intl-idn": "^1.28",
+        "symfony/translation": "^6.0",
+        "symfony/webpack-encore-bundle": "^1.17",
+        "symfony/framework-bundle": "^6.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
+    }
+}
