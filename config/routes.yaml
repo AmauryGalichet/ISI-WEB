@@ -5,3 +5,13 @@ controllers:
 kernel:
     resource: ../src/Kernel.php
     type: annotation
+
+# config/routes.yaml
+
+home:
+    path: /
+    controller: 'App\Controller\HomepageController::index'
+
+product_detail:
+    path: '/product/{productId}'
+    controller: 'App\Controller\HomepageController::productDetail'

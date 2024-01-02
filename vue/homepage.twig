@@ -1,0 +1,66 @@
+{% extends 'base.twig' %}
+
+
+{% block body %}
+<main>
+    <section class="hero-banner-section">
+        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-body-tertiary">
+            <video autoplay muted loop class="hero-banner-video">
+                <source src="http://localhost/livityshop/public/img/livityshoprom.mp4" type="video/mp4">
+                <source src="http://localhost/livityshop/public/img/livityshopromweb.webm" type="video/webm" />
+                Votre navigateur ne prend pas en charge la balise vidéo.
+            </video>
+        </div>
+    </section>
+</main>
+<div class="scallop-up"></div>
+<article >
+{% block styles %}
+    <link rel="stylesheet" href="http://localhost/livityshop/public/css/homepage.css">
+{% endblock %}
+<div class="cards">
+  <div class="card content">
+    <div class="card-content">
+      <div class="card-img">
+        <img src="http://localhost/livityshop/public/img/sales.jpg" alt="promos">
+      </div>
+      <div class="card-label">Spécials Sales </div>
+      <div class="card-title">
+        Soyez au courant des promotions sur nos séléctions de produits !
+      </div>
+    </div>
+  </div>
+  <div class="card content">
+    <div class="card-content">
+      <div class="card-img">
+        <img src="http://localhost/livityshop/public/img/fruit.jpg" alt="frais">
+      </div>
+      <div class="card-label">
+        Rayons Frais
+      </div>
+      <div class="card-title">
+        De nouveaux produits frais au quotidien!
+      </div>
+    </div>
+  </div>
+  
+  <div class="card content">
+    <div class="card-content">
+      <div class="card-img">
+        <img src="http://localhost/livityshop/public/img/meal.jpg" alt="meal">
+      </div>
+      <div class="card-label">
+        Innovation
+      </div>
+      <div class="card-title">
+        Adaptez vos courses à votre meal plan ! 
+      </div>
+    </div>
+  </div>
+  <div class="card form">
+    <div class="form-title">Sign Up</div>
+  </div>
+</div>
+   
+</article>
+{% endblock %}

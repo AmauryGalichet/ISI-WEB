@@ -1,0 +1,72 @@
+/* Styles for the container */
+*, ::after, ::before {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+}
+div.container {
+    position: relative;
+    margin: 20px;
+    width: 300px;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+  }
+  
+  /* Styles for the product image */
+  div.container img.img-fruit {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  /* Styles for the product name */
+  div.container h3 {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  /* Styles for the product description */
+  div.container p {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Styles for the properties section */
+  div.container .properties {
+    margin-top: 15px;
+  }
+  
+  /* Styles for the price section */
+  div.container .properties .price {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  /* Styles for the "Add to cart" button */
+  div.container .ip-add-cart {
+    border: none;
+    padding: 10px 20px;
+    background: #5d9272;
+    color: #fff;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in;
+  }
+  
+  div.container .ip-add-cart:hover {
+    background: #5d7b6c;
+  }
+  
+  /* Styles for the "No products available" message */
+  p.no-products {
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+    margin-top: 20px;
+  }
+  

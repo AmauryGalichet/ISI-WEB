@@ -1,32 +1,38 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
-use Symfony\Component\Dotenv\Dotenv;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernel;
+require_once 'vendor/autoload.php';
 
-(new Dotenv())->bootEnv(__DIR__.'vendor/.env');
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
-require __DIR__.'/config/bootstrap.php';
+$loader = new FilesystemLoader(__DIR__ . '/vue');
 
-$kernel = new HttpKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+$twig = new Environment($loader, [
+    'cache' => false, // Mettez à jour en mode cache pour la production
+]);
 
-$request = Request::createFromGlobals();
-$response = $kernel->handle($request);
+// Fonction pour rendre le template en fonction de la route
+function renderTemplate($twig, $route)
+{
+    switch ($route) {
+        case '/':
+            return $twig->render('homepage.twig', ['controller_name' => 'HomepageController']);
+        case '/products':
+            // Ajoutez la logique pour la page de produits
+            return $twig->render('products.twig', ['controller_name' => 'ProductController']);
+        case '/entreprise':
+            // Ajoutez la logique pour la page d'entreprise
+            return $twig->render('entreprise.twig', ['controller_name' => 'EntrepriseController']);
+        default:
+            // Page par défaut pour une route non reconnue
+            return $twig->render('404.twig', ['controller_name' => 'NotFoundController']);
+    }
+}
 
-// Autres manipulations pour Twig
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/src/templates');
-$twig = new \Twig\Environment($loader);
+// Récupération de la route depuis la requête
+$route = isset($_GET['route']) ? $_GET['route'] : '/';
 
-// Rendre le modèle Twig
-$template = $twig->load('cart.html.twig');
-$content = $template->render();
+// Rendu du template en fonction de la route
+$content = renderTemplate($twig, $route);
 
-$response->setContent($content);  // Remplacez le contenu de la réponse avec le rendu Twig
-
-// Envoyez la réponse au navigateur
-$response->send();
-
-// Terminez la demande
-$kernel->terminate($request, $response);
+echo $content;
