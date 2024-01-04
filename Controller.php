@@ -55,16 +55,46 @@ function productsPage(\Twig\Environment $twig)
 function EntreprisePage(\Twig\Environment $twig)
 {
     try {
-        // Charger le template entreprise.twig
+        
         $entrepriseTemplate = $twig->load('entreprise.twig');
 
-        // Rendre le template de l'entreprise
+        
         echo $entrepriseTemplate->render();
     } catch (\Exception $e) {
         echo "Error: " . $e->getMessage();
-        exit; // En cas d'erreur, arrêter l'exécution
+        exit; 
     }
 }
+
+function connect(\Twig\Environment $twig)
+{
+    try {
+        
+        $loginTemplate = $twig->load('logins.twig');
+
+        
+        echo $loginTemplate->render();
+    } catch (\Exception $e) {
+        echo "Error: " . $e->getMessage();
+        exit; 
+    }
+}
+
+function getPageInscription(\Twig\Environment $twig)
+{
+    try {
+        
+        $inscripTemplate = $twig->load('inscription.twig');
+
+        
+        echo $inscripTemplate->render();
+    } catch (\Exception $e) {
+        echo "Error: " . $e->getMessage();
+        exit; 
+    }
+}
+
+
 
 
 

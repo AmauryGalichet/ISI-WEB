@@ -23,16 +23,13 @@ $session_id = session_id();
             getAccueil($twig);
             break;
         case 'connexion':
-            getPageConnexion();
-            break;
-        case 'postConnection':
-            connexion();
+            connect($twig);
             break;
         case 'deconnexion':
             deconnexion();
             break;
         case 'inscription':
-            getPageInscription();
+            getPageInscription($twig);
             break;
         case 'postInscription':
             inscription();

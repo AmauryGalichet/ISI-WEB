@@ -10,6 +10,7 @@
     <title>Product example · Bootstrap v5.3</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/product/">
+  
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
@@ -218,7 +219,7 @@
           <li class="nav-item"><a class="nav-link" href="index.php?url=produits">Produits</a></li>
           
           <li class="nav-item"><a class="nav-link" href="index.php?url=Entreprise">Entreprise</a></li>
-           <li class="nav-item"><a class="nav-link" href="http://localhost/livityshop/src/templates/entreprise/entreprise.html.twig">Connexion/Inscription</a></li>
+           <li class="nav-item"><a class="nav-link" href="nav-item"><a class="nav-link" href="index.php?url=connexion">Connexion/Inscription</a></li>
           <li class="nav-item"><a class="nav-link" href="#">
             <svg class="bi" width="24" height="24"><use xlink:href="#cart"/></svg>
           </a></li>
@@ -229,12 +230,14 @@
 </nav>
 
 
-
 {% block body %}
   
 {% endblock %}
 
 {% block javascripts %}
+    
+    <script src="http://localhost/livityshop/public/js/products.js"></script>
+    <script src="http://localhost/livityshop/public/js/login.js"></script>
 {% endblock %}
  <footer class="py-3 my-4">
        
