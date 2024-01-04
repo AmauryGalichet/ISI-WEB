@@ -1,9 +1,25 @@
-/* Styles for the container */
-*, ::after, ::before {
+/* Reset styles for all elements */
+*,
+::after,
+::before {
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
 }
+
+/* Custom styling for the article */
+.my-custom-article-style {
+    background-color: #f5f5f5; /* Couleur de fond */
+    padding: 20px; /* Espacement intérieur */
+    margin-bottom: 20px; /* Marge en bas */
+    border: 1px solid #ddd; /* Bordure */
+    border-radius: 5px;
+    display: flex; /* Utiliser Flexbox */
+    flex-wrap: wrap; /* Permettre aux éléments enfants de passer à la ligne si nécessaire */
+    justify-content: space-between; /* Espacement équitable entre les éléments enfants */
+}
+
+/* Styles for the container */
 div.container {
     position: relative;
     margin: 20px;
@@ -13,39 +29,39 @@ div.container {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 15px;
-  }
-  
-  /* Styles for the product image */
-  div.container img.img-fruit {
+}
+
+/* Styles for the product image */
+div.container img.img-fruit {
     width: 100%;
     border-radius: 8px;
-  }
-  
-  /* Styles for the product name */
-  div.container h3 {
+}
+
+/* Styles for the product name */
+div.container h3 {
     font-size: 18px;
     margin: 10px 0;
-  }
-  
-  /* Styles for the product description */
-  div.container p {
+}
+
+/* Styles for the product description */
+div.container p {
     font-size: 14px;
     color: #555;
-  }
-  
-  /* Styles for the properties section */
-  div.container .properties {
+}
+
+/* Styles for the properties section */
+div.container .properties {
     margin-top: 15px;
-  }
-  
-  /* Styles for the price section */
-  div.container .properties .price {
+}
+
+/* Styles for the price section */
+div.container .properties .price {
     font-size: 16px;
     color: #333;
-  }
-  
-  /* Styles for the "Add to cart" button */
-  div.container .ip-add-cart {
+}
+
+/* Styles for the "Add to cart" button */
+div.container .ip-add-cart {
     border: none;
     padding: 10px 20px;
     background: #5d9272;
@@ -56,17 +72,16 @@ div.container {
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s ease-in;
-  }
-  
-  div.container .ip-add-cart:hover {
+}
+
+div.container .ip-add-cart:hover {
     background: #5d7b6c;
-  }
-  
-  /* Styles for the "No products available" message */
-  p.no-products {
+}
+
+/* Styles for the "No products available" message */
+p.no-products {
     font-size: 16px;
     color: #555;
     text-align: center;
     margin-top: 20px;
-  }
-  
+}

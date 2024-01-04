@@ -26,7 +26,7 @@ class SelectionModele
             }
 
             $products = $sth->fetchAll(PDO::FETCH_ASSOC);
-
+            
             return $products;
         } catch (PDOException $e) {
             $erreur = $e->getMessage();

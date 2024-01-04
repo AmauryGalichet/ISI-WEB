@@ -1,0 +1,324 @@
+:root {
+    --card-margin: 4vw;
+    --card-top-offset: 1em;
+    --numcards: 3;
+    --outline-width: 0px;
+}
+
+#cardis {
+    padding-bottom: calc(var(--numcards) * var(--card-top-offset));
+    margin-bottom: var(--card-margin);
+}
+
+#card_partenaires {
+    --index: 1;
+}
+
+#card_livityshop {
+    --index: 2;
+}
+
+#card_pastries {
+    --index: 3;
+}
+
+.cardi {
+    position: sticky;
+    top: 0;
+    padding-top: calc(var(--index) * var(--card-top-offset));
+    outline: var(--outline-width) solid rgb(55, 78, 60);
+}
+
+@supports (animation-timeline: works) {
+    @scroll-timeline cards-element-scrolls-in-body {
+        source: selector(body);
+        scroll-offsets:
+            selector(#cards) start 1,
+            selector(#cards) start 0
+        ;
+        start: selector(#cards) start 1;
+        end: selector(#cards) start 0;
+        time-range: 4s;
+    }
+
+    .cardi {
+        --index0: calc(var(--index) - 1);
+        --reverse-index: calc(var(--numcards) - var(--index0));
+        --reverse-index0: calc(var(--reverse-index) - 1);
+    }
+    
+    .custom-card__content {
+        transform-origin: 50% 0%;
+        will-change: transform;
+
+        --duration: calc(var(--reverse-index0) * 1s);
+        --delay: calc(var(--index0) * 1s);
+
+        animation: var(--duration) linear scale var(--delay) forwards;
+        animation-timeline: cards-element-scrolls-in-body;
+    }
+
+    @keyframes scale {
+        to {
+            transform: scale(calc(
+                1.1
+                -
+                calc(0.1 * var(--reverse-index))
+            ));
+        }
+    }
+}
+
+
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+  }
+  
+  :root {
+	--secondary-color: #151226;
+	--contrast-color: #BF307F;
+  }
+  .overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	z-index: -10;
+	background-color: var(--contrast-color);
+  }
+  
+  .container {
+	display: flex;
+	height: 100vh;
+	justify-content: space-around;
+	align-items: center;
+	color: #fff;
+	animation: expand .8s ease forwards;
+	background-color: var(--secondary-color);
+	position: relative;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	transition: all .8s ease;
+  }
+  
+  .container_content {
+   width: 50%;
+  }
+  
+  .container_content_inner {
+	width: 80%;
+	margin-left: 80px;
+  }
+  
+  .container_outer_img {
+	margin: 50px;
+	width: 50%;
+	overflow: hidden;
+  }   
+	  
+  .container_img {
+	width: 100%;
+	animation: slideIn 1.5s ease-in-out forwards;
+  }
+  
+  .par {
+	height: auto;
+	overflow: hidden;
+  }
+  
+  p{
+	line-height: 28px;
+	transform: translateY(300px);
+	animation: slideUp .8s ease-in-out forwards .8s;
+  }
+  
+  .btns {
+	height: 100%;
+	position: relative;
+	width: 150px;
+	overflow: hidden;
+  }
+  
+  .btns_more {
+	background: transparent;
+	border: 1px solid var(--contrast-color);
+	border-radius: 50px;
+	padding: 8px 12px;
+	color: #BF307F;
+	font-size: 16px;
+	text-transform: uppercase;
+	position: relative;
+	margin-top: 15px;
+	outline: none;
+	transform: translateY(50px);
+	animation: slideUp .8s ease-in-out  forwards 1s;
+  }
+  
+  .title {
+	overflow: hidden;
+	height: auto;
+  }
+  
+  h1 {
+	  font-size: 40px;
+	  color: var(--contrast-color);
+	  margin-bottom: 20px;
+	  transform: translateY(100px);
+	  animation: slideUp .8s ease forwards .5s;
+  }
+  
+  @keyframes slideIn {
+	0% {
+	  transform: translateX(500px) scale(.2);
+	}
+	100% {
+	  transform: translateX(0px) scale(1);
+	}
+  }
+  
+  @keyframes slideUp {
+	0% {
+	  transform: translateY(300px);
+	}
+	100% {
+	  transform: translateY(0px);
+	}
+  }
+  
+  @keyframes expand {
+	0% {
+	  transform: translateX(1400px);
+	}
+	100% {
+	  transform: translateX(0px);
+	}
+  }
+  
+
+#debug {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+}
+#debug::after {
+  content: " Show Debug";
+  margin-left: 1.5em;
+  color: white;
+  white-space: nowrap;
+}
+
+#debug:checked ~ main {
+  --outline-width: 1px;
+}
+
+
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+
+
+header,
+main {
+	width: 80vw;
+	margin: 0 auto;
+}
+
+header {
+	height: 100vh;
+	display: grid;
+	place-items: center;
+}
+
+#cardis {
+	list-style: none;
+	outline: calc(var(--outline-width) * 10) solid blue;
+	
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--card-margin);
+}
+
+.cardi {
+	outline: var(--outline-width) solid rgb(55, 78, 60);
+}
+
+.custom-card__content {
+	box-shadow: 0 0.2em 1em rgba(0, 0, 0, 0.1), 0 1em 2em rgba(0, 0, 0, 0.1);
+	background: rgb(255, 255, 255);
+	color: rgb(10, 5, 7);
+	border-radius: 1em;
+	overflow: hidden;
+
+	display: grid;
+	grid-template-areas: "text img";
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto;
+
+	align-items: stretch;
+	outline: var(--outline-width) solid lime;
+}
+
+.custom-card__content > div {
+	grid-area: text;
+	width: 80%;
+	place-self: center;
+	text-align: left;
+
+	display: grid;
+	gap: 1em;
+	place-items: start;
+}
+
+.custom-card__content > figure {
+	grid-area: img;
+	overflow: hidden;
+}
+
+.custom-card__content > figure > img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+h1 {
+	font-weight: 300;
+	font-size: 3.5em;
+}
+
+h2 {
+	font-weight: 300;
+	font-size: 2.5em;
+}
+
+p {
+	font-family: sans-serif;
+	font-weight: 300;
+	line-height: 1.42;
+}
+
+.btn {
+	background: rgb(79, 115, 95);
+	color: rgb(255 255 255);
+	text-decoration: none;
+	display: inline-block;
+	padding: 0.5em;
+	border-radius: 0.25em;
+}
+
+aside {
+	width: 50vw;
+	margin: 0 auto;
+	text-align: left;
+}
+
+aside p {
+	margin-bottom: 1em;
+}

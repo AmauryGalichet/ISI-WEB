@@ -40,13 +40,4 @@ class Setup
     }
 }
 
-// Example of usage
-$setup = new Setup();
-$connection = $setup->getConnexion();
-
-if ($setup->isConnected()) {
-    echo "Connected to the database!";
-} else {
-    echo "Failed to connect to the database.";
-}
 ?>
