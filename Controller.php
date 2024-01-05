@@ -13,23 +13,23 @@ function getAccueil($twig) {
 
 function productDetail($productId, $twig)
 {
-    
     $selectionModele = new \App\Model\SelectionModele();
 
     try {
         $productDetails = $selectionModele->getProductDetails($productId);
+
+        if ($productDetails === null) {
+            echo $twig->render('productsde.twig', ['error' => 'Product details not found']);
+            return;
+        }
+
+        echo $twig->render('productsde.twig', [
+            'productDetails' => $productDetails,
+        ]);
     } catch (\Exception $e) {
-       
-        echo $twig->render('productsde.twig', ['error' => 'Product details not found']);
-        return;
+        echo $twig->render('productde.twig', ['error' => 'An error occurred while fetching product details']);
     }
-
-    echo $twig->render('product_detail.twig', [
-        'productDetails' => $productDetails,
-        
-    ]);
 }
-
 
 
 
@@ -88,6 +88,20 @@ function getPageInscription(\Twig\Environment $twig)
 
         
         echo $inscripTemplate->render();
+    } catch (\Exception $e) {
+        echo "Error: " . $e->getMessage();
+        exit; 
+    }
+}
+
+function PanierPage(\Twig\Environment $twig)
+{
+    try {
+        
+        $PanierTemplate = $twig->load('cart.twig');
+
+        
+        echo $PanierTemplate->render();
     } catch (\Exception $e) {
         echo "Error: " . $e->getMessage();
         exit; 

@@ -54,26 +54,40 @@ class SelectionModele
         }
     }
 
-    public function getProductDetails($productId)
-{
-    try {
-        $setup = new Setup();
-        $conn = $setup->getConnexion();
-
-        $sql = "SELECT * FROM products WHERE id = ?";
-        $sth = $conn->prepare($sql);
-        $sth->execute([$productId]);
-
-        $productDetails = $sth->fetch(PDO::FETCH_ASSOC);
-
-        return $productDetails;
-    } catch (PDOException $e) {
-        $erreur = $e->getMessage();
-        throw new \Exception("Error fetching product details: " . $erreur);
+    public function getProductDetails($productId = null)
+    {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+    
+            // Use different queries based on whether a product ID is specified or not
+            if ($productId !== null) {
+                $sql = "SELECT * FROM products WHERE id = ?";
+                $sth = $conn->prepare($sql);
+                $sth->execute([$productId]);
+            } else {
+                throw new \InvalidArgumentException("Product ID is required for fetching product details.");
+            }
+    
+            $productDetails = $sth->fetch(PDO::FETCH_ASSOC);
+           
+    
+            return $productDetails;
+        } catch (PDOException $e) {
+            $erreur = $e->getMessage();
+            throw new \Exception("Erreur lors de la récupération des détails du produit : " . $erreur);
+        }
     }
-}
+    
+    
 
 }
+
+
+
+
+
+
 
 
 

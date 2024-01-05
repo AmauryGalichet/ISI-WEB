@@ -1,31 +1,63 @@
 {% extends 'base.twig' %}
 
-{% block stylesheets %}
-  
-    <link rel="stylesheet" href="http://localhost/livityshop/public/css/products.css">
-{% endblock %}
+
+
 
 {% block body %}
-<article class="my-custom-article-style">
+<article class="my-custom-articlei-style" style="display: flex; flex-wrap: wrap;">
     {% if products is not empty %}
         {% for product in products %}
-            <div class="container">
-                <img src="http://localhost/livityshop/productimages/{{ product.image }}" 
-                   
-                    alt="{{ product.name }}" class="img-fruit" />
+            <div class="containeri">
+         <a href='index.php?url=productDetails&id={{ product.id }}' class="product-link" data-product-id="{{ product.id }}">
+    <img src="http://localhost/livityshop/productimages/{{ product.image }}" alt="{{ product.name }}">
+</a>
+
+
                 <h3>{{ product.name }}</h3>
                 <p>{{ product.description }}</p>
-                <div class="properties">
-                    <div class="price">
+                <div class="propertiesi">
+                    <div class="pricei">
                         <h4>Price</h4>
                         <span class="amount">{{ product.price }} EUR</span>
                     </div>
                 </div>
-                <input class="ip-add-cart" type="button" value="Add to cart" />
+                <input class="ip-add-carti" type="buttoni" value="Add to cart" />
             </div>
         {% endfor %}
     {% else %}
-        <p>No products available.</p>
+        <p class="no-products">No products available.</p>
     {% endif %}
 </article>
+
 {% endblock %}
+
+{% block scripts %}
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Get all elements with the class 'product-link'
+    var productLinks = document.querySelectorAll('.product-link');
+
+    // Add a click event listener to each link
+    productLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            // Prevent the default behavior of the link
+            event.preventDefault();
+
+            // Get the value of 'data-product-id'
+            var productId = link.dataset.productId;
+
+            // Now you can use the productId as needed
+            console.log('Product ID:', productId);
+
+            // You can redirect to the product details page with the product ID
+            // Example: window.location.href = 'index.php?url=productDetails&id=' + productId;
+        });
+    });
+});
+
+</script>
+
+
+{% endblock %}
+

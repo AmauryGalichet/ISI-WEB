@@ -1,40 +1,31 @@
 {% extends 'base.twig' %}
 
 {% block body %}
-    <section class="product">
-    {% block styles %}
-    <link rel="stylesheet" href="http://localhost/livityshop/public/css/detail.css">
-    {% endblock %}
-        {% for product in products %}
-            <div class="product__photo">
-                <!-- Ajoutez vos éléments d'image ici -->
-                <img src="http://localhost/livityshop/productimages/{{ product.image }}" alt="{{ product.name }}">
+    <section class="productdeta">
+        <div class="productdeta__photo">
+            <a href="#" class="product-link" data-product-id="{{ productDetails.id }}">
+                <img src="http://localhost/livityshop/productimages/{{ productDetails.image }}" alt="{{ productDetail.name }}">
+            </a>
+        </div>
+        <div class="productdeta__info">
+        
+        
+            <div class="titledeta">
+                <h1>{{ productDetails.name }}</h1>
+                <span>Type: {{ productDetails.cat_id }}</span> {# Assuming cat_id is the category identifier #}
             </div>
-            <div class="product__info">
-                <div class="title">
-                    <h1>{{ product.name }}</h1>
-                    <span>Type: {{ product.category }}</span>
-                </div>
-                <div class="price">
-                    <span>{{ product.price }}</span>£
-                </div>
-                <div class="description">
-                    <h3>Description</h3>
-                    <ul>
-                        <li>{{ product.description }}</li>
-                    </ul>
-                </div>
-                <button class="buy--btn">ADD TO CART</button>
+            <div class="pricedeta">
+                <span>{{ productDetails.price }}</span>£
             </div>
-        {% endfor %}
+            <div class="descriptiondeta">
+                <h3>Description</h3>
+                <ul>
+                    <li>{{ productDetails.description }}</li>
+                </ul>
+            </div>
+            <button class="buy--btndeta">ADD TO CART</button>
+        </div>
     </section>
 
-    <section class="categories">
-        <h2>Categories</h2>
-        <ul>
-            {% for category in categories %}
-                <li>{{ category.name }}</li>
-            {% endfor %}
-        </ul>
-    </section>
+
 {% endblock %}

@@ -38,14 +38,18 @@ $session_id = session_id();
             productsPage($twig);
             break;
 
-        case 'produitsdetails':
-            productDetail($productId, $twig);
-
+        case 'productDetails':
+                if (isset($_GET['id'])) {
+                    $productId = $_GET['id'];
+                    productDetail($productId, $twig);
+                }
+                break;
+            
         case 'ajouterPanier':
             ajouterObjetPanier();
             break;
         case 'panier':
-            affichPanier();
+            PanierPage();
             break;
         case 'supprimerPanier':
             supprimerPanier();
