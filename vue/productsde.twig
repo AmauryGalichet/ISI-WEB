@@ -1,31 +1,27 @@
 {% extends 'base.twig' %}
 
 {% block body %}
-    <section class="productdeta">
-        <div class="productdeta__photo">
+    <section class="product">
+        <div class="product__photo">
             <a href="#" class="product-link" data-product-id="{{ productDetails.id }}">
-                <img src="http://localhost/livityshop/productimages/{{ productDetails.image }}" alt="{{ productDetail.name }}">
+                <img src="http://localhost/livityshop/productimages/{{ productDetails.image }}" alt="{{ productDetails.name }}" style="width:90%;filter: drop-shadow(1px 1px 3px $color-secondary);">
             </a>
         </div>
-        <div class="productdeta__info">
-        
-        
-            <div class="titledeta">
+        <div class="product__info">
+            <div class="title">
                 <h1>{{ productDetails.name }}</h1>
-                <span>Type: {{ productDetails.cat_id }}</span> {# Assuming cat_id is the category identifier #}
+                <span>Type: {{ productDetails.cat_id }}</span>
             </div>
-            <div class="pricedeta">
-                <span>{{ productDetails.price }}</span>£
+            <div class="price">
+                <span>{{ productDetails.price }}</span>Euros
             </div>
-            <div class="descriptiondeta">
+            <div class="description">
                 <h3>Description</h3>
                 <ul>
                     <li>{{ productDetails.description }}</li>
                 </ul>
             </div>
-            <button class="buy--btndeta">ADD TO CART</button>
+            <button class="buy--btn">ADD TO CART</button>
         </div>
     </section>
-
-
 {% endblock %}
