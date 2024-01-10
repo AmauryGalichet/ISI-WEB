@@ -2,13 +2,17 @@
 
 require_once 'vendor/autoload.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 $loader = new FilesystemLoader(__DIR__ . '/vue');
 
-$twig = new Environment($loader, [ 
+$twig = new Environment($loader, [
     'debug' =>true,
     'cache' => false, // Mettez à jour en mode cache pour la production
 ]);
@@ -24,6 +28,9 @@ $session_id = session_id();
             break;
         case 'connexion':
             connect($twig);
+            break;
+        case 'postConnection':
+            connexion();
             break;
         case 'deconnexion':
             deconnexion();
@@ -49,23 +56,16 @@ $session_id = session_id();
             ajouterObjetPanier();
             break;
         case 'panier':
-            PanierPage();
+            affichPanier($twig);
             break;
         case 'supprimerPanier':
             supprimerPanier();
             break;
-        case 'validerPanier':
-            formValiderPanier();
-            break;
-        case 'validerOrder':
-            validerOrder();
-            break;
-        case 'commande':
+        
+        case 'paiements':
             afficherListeCommandes();
             break;
-        case 'detailsCommande':
-            afficherDetailCommande();
-            break;
+        
         case 'Entreprise':
             EntreprisePage($twig);
             break;

@@ -80,8 +80,7 @@ class CartModele
                     FROM orderitems oi
                     JOIN products p ON oi.product_id = p.id
                     JOIN orders o ON oi.order_id = o.id
-                    JOIN logins l ON o.customer_id = l.customer_id
-                    WHERE l.id = :userId";
+                    WHERE o.id = :userId";
 
             $sth = $conn->prepare($sql);
             $sth->bindParam(':userId', $userId, PDO::PARAM_INT);
@@ -128,4 +127,3 @@ $total = $cartModele->calculateTotal($userId);
 echo $total;
 
 // Now $total contains the calculated total amount
-
