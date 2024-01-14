@@ -89,28 +89,49 @@ class User
             throw new \Exception("Erreur lors de la connexion de l'administrateur : " . $erreur);
         }
     }
-}
+    
+    // Fonction pour obtenir la liste des commandes
+    public function getOrdersList($conn)
+    {
+        try {
+            // Requête SQL pour obtenir la liste des commandes avec les informations associées
+            $sql = "SELECT orders.id, customers.forname, customers.surname, 
+                           delivery_addresses.add1 AS delivery_address, orders.status, 
+                           orders.total, orders.date
+                    FROM orders
+                    JOIN customers ON orders.customer_id = customers.id
+                    LEFT JOIN delivery_addresses ON orders.delivery_add_id = delivery_addresses.id";
 
+            $sth = $conn->prepare($sql);
+            $sth->execute();
 
-$userModel = new User();
+            // Récupération des résultats
+            $ordersList = $sth->fetchAll(PDO::FETCH_ASSOC);
 
-// Example login attempt
-$username = "john";
-$password = "SHA1('John+123')";
-
-try {
-    $userData = $userModel->loginUser($username, $password);
-
-    if ($userData) {
-        // Login successful
-        echo "Login successful! User ID: {$userData['customer_id']}, Username: {$userData['username']}";
-    } else {
-        // Login failed
-        echo "Login failed. Invalid username or password.";
+            return $ordersList;
+        } catch (PDOException $e) {
+            throw new \Exception("Erreur lors de la récupération des commandes : " . $e->getMessage());
+        }
     }
-} catch (\Exception $e) {
-    // Handle exceptions
-    echo "An error occurred: " . $e->getMessage();
+    
+    
+    
+    // Fonction pour obtenir le statut de la commande en texte
+    function getOrderStatusText($statusCode) {
+        switch ($statusCode) {
+            case 0:
+                return "L'utilisateur ajoute toujours des articles à son panier.";
+            case 1:
+                return "L'utilisateur a entré son adresse.";
+            case 2:
+                return "L'utilisateur a payé pour l'article.";
+            case 10:
+                return "L'administrateur a confirmé la transaction et envoyé l'élément.";
+            default:
+                return "Statut inconnu";
+        }
+    }
+    
+    
 }
 
-?>

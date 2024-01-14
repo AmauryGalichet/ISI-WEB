@@ -1,0 +1,32 @@
+{% extends 'base.twig' %}
+
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="css/login.css">
+{% endblock %}
+
+
+{% block body %}
+    <h2>Détail de la commande No{{ var2.id }}</h2>
+
+    <h3>Liste des produits</h3>
+    {% for unProduit in var1 %}
+        {% set nomProduit = unProduit['name'] %}
+        {% set quantity = unProduit['quantity'] %}
+        {{ nomProduit }} : {{ quantity }} <br/><br/>
+    {% endfor %}
+
+    <h3>Adresse de livraison :</h3>
+    Nom : {{ var3.firstname }}<br/>
+    Prénom : {{ var3.lastname }}<br/>
+    Ligne 1 : {{ var3.add1 }}<br/>
+    Ligne 2 : {{ var3.add2 }}<br/>
+    Ligne 3 : {{ var3.city }}<br/>
+    Code postal : {{ var3.postcode }}<br/>
+    Téléphone : {{ var3.phone }}<br/>
+    Email : {{ var3.email }}<br/><br/>
+
+    <a href="?action=validerEnvoi&idOrder={{ var2.id }}"><button class="btn-primary">Valider l'envoi</button></a>
+
+{% endblock %}
+

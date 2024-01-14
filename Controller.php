@@ -5,6 +5,11 @@ use Twig\Environment;
 
 require_once 'vendor/autoload.php';
 require 'models/selectionmodele.php';
+require 'invoice.php';
+
+//nous avions un warning dont nous ne connaissions pas la source 
+// afin d'eviter l'affichage de ce dernier , nous avons preferer utiliser cette fonction
+error_reporting(E_ERROR | E_PARSE);
 
 
 $loader = new \Twig\Loader\FilesystemLoader('C:\xampp\htdocs\livityshop\vue');
@@ -157,7 +162,7 @@ function getOrder($customer_id = null) {
 
         // Si la commande n'existe pas, créez une nouvelle commande
         if (empty($unOrder)) {
-            $dbx->createOrder(session_id());
+            $dbx->createOrder($customer_id);
             // Refetch la commande après sa création
             $unOrder = $dbx->getLastOrderFromSession($customer_id);
         }
@@ -251,34 +256,81 @@ function supprimerPanier() {
 }
 
 function connexion() {
-    if (isset($_POST['username']) && isset($_POST['password'])) {
-        $username=$_POST['username'];
-        $password=$_POST['password'];
-        $dbx = new \App\Model\SelectionModele();
-        $unAdmin = $dbx->getUnAdmin($username);
-        if ($unAdmin != false) {
-            if (password_verify($password, $unAdmin->password)) {
-                $_SESSION['username'] = $username;
-                $_SESSION['idAdmin'] = $unAdmin->id;
-                return render('entreprise.twig');
+    global $twig;
 
-            }
+    // Vérifiez d'abord si l'administrateur est déjà connecté
+    $isAdminConnected = isset($_SESSION['idAdmin']);
+
+    // Si l'administrateur est connecté, redirigez vers la page appropriée
+    if ($isAdminConnected) {
+        try {
+            echo $twig->render('isconnected.twig', ['isAdminConnected' => $isAdminConnected]);
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+            exit;
         }
-        $unUserDB=$dbx->getUserByUsername($username);
-        if (!empty($unUserDB)) {
-            if (password_verify($password, $unUserDB->password)) {
-                $_SESSION['username'] = $username;
-                $_SESSION['id'] = $unUserDB->id;
-                fusionnerPanierSiPossible($unUserDB->id);
-                render('inscription.twig');
+        return;
+    }
+
+    // Si le formulaire est soumis
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $dbx = new \App\Model\SelectionModele();
+        
+        // Ajoutez des messages de débogage
+        echo "Username: $username, Password: $password";
+
+        // Vérifiez d'abord si l'utilisateur existe dans la table logins
+        $existingUser = $dbx->getUserByUsername($username);
+
+        if (!empty($existingUser) && password_verify($password, $existingUser->password)) {
+            // L'utilisateur existe, connectez-le
+            $_SESSION['username'] = $username;
+
+            if (!empty($existingUser->user_id)) {
+                // Utilisateur trouvé dans la table logins (logins)
+                $_SESSION['id'] = $existingUser->user_id;
+                fusionnerPanierSiPossible($existingUser->user_id);
+                $templateName = 'isconnected.twig';
             } else {
-                render('logins.twig', 'Mot de passe incorrect');
+                // Utilisateur trouvé seulement dans la table admin
+                $_SESSION['idAdmin'] = $existingUser->id;
+                $templateName = 'isconnected.twig';
+            }
+
+            try {
+                // Ajoutez des messages de débogage
+                echo "User connected successfully!";
+                echo $twig->render('base.twig', ['isAdminConnected' => $isAdminConnected]);
+            } catch (\Exception $e) {
+                echo "Error: " . $e->getMessage();
+                exit;
             }
         } else {
-            render('logins.twig', 'Utilisateur incorrect');
+            // Ajoutez des messages de débogage
+            echo "Invalid username or password";
+            $templateName = 'notconnected.twig';
+
+            try {
+                echo $twig->render('base.twig', ['isAdminConnected' => $isAdminConnected]);
+            } catch (\Exception $e) {
+                echo "Error: " . $e->getMessage();
+                exit;
+            }
+        }
+    } else {
+        // Si le formulaire n'est pas soumis, redirigez vers la page appropriée
+        try {
+            echo $twig->render('base.twig', ['isAdminConnected' => $isAdminConnected]);
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+            exit;
         }
     }
 }
+
+
 
 function inscription() {
     global $twig;
@@ -305,6 +357,7 @@ function fusionnerPanierSiPossible($idCustomer) {
         $session = session_id();
         $panierSession = $dbx->getLastOrderFromSession($session);
         //Si il y a un panier session
+        $dbx->changervaleurregistered($session);
         if ($panierSession != false) {
             $panierID = $dbx->getLastOrderFromID($idCustomer);
             //Si il n'y a pas de panier utilisateur alors on convertit le panier session en utilisateur
@@ -330,6 +383,7 @@ function fusionnerPanierSiPossible($idCustomer) {
                 $dbx->supprimerPanierSession($session);
             }
         }
+        $dbx->changervaleurregistered($session);
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
     }
@@ -340,4 +394,222 @@ function deconnexion() {
     session_destroy();
     $_SESSION = array();
     render('homepage.twig');
+}
+
+function formValiderPanier1() {
+    global $twig;
+    try {
+        if (!isset($_SESSION['id'])) {
+            connect($twig);
+        } else {
+            $dbx = new \App\Model\SelectionModele();
+            $userInfo = $dbx->getUserById($_SESSION['id']);
+            $customerInfo = $dbx->getCustomerInfo($userInfo->customer_id);
+            $unOrder = getOrder($_SESSION['id']);
+            $total = $dbx->calculateTotal($unOrder->id);
+            $lesArticles = $dbx->getItemByOrderId($unOrder->id);
+            $lesAdresses = $dbx->getLesAdresses($userInfo->customer_id);
+
+            try {
+                $productsTemplate = $twig->load('Etape1.twig');
+                echo $productsTemplate->render([
+                    'var1' => $lesArticles,
+                    'var2' => $userInfo,
+                    'var3' => $customerInfo,
+                    'var4' => $lesAdresses,
+                    'total' => $total
+
+                ]);
+            }
+            catch (\Exception $e) {
+                echo "Error: " . $e->getMessage();
+                exit;
+            }
+        }
+    }
+    catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+        exit;
+    }
+}
+
+function validerOrder()
+{
+    global $twig;
+    try {
+        $idCust = $_SESSION['id'];
+        $nom = $_POST['nom'];
+        $prenom = $_POST['prenom'];
+        $addr1 = $_POST['addr1'];
+        $addr2 = $_POST['addr2'];
+        $addr3 = $_POST['addr3'];
+        $cp = $_POST['cp'];
+        $tel = $_POST['tel'];
+        $mail = $_POST['mail'];
+        $paiment = $_POST['paiment'];
+        $dbx = new \App\Model\SelectionModele();
+        $custInfo = $dbx->getCustomerInfo($idCust);
+        $login = $dbx->getUserById($_SESSION['id']);
+        $Order = getOrder($_SESSION['id']);
+        $dbx->ajouterAdresse($prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail);
+        $adresse = $dbx->getLastAdresse();
+        if ($custInfo) {
+            $dbx->updateCustomer($idCust, $prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail);
+        } else {
+            $dbx->createCustomer( $prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail);
+        }
+        $result = $dbx->getCustomerInfo($idCust);
+        print_r($result); // Ajoutez cette ligne pour débogage
+        $IdL = $login->id;
+        $IdO = $Order->id;
+        $Custid= $custInfo->id;
+        $dbx->updateLastLogin($IdL, $Custid);
+        echo "updateLastLogin a été exécuté"; // Ajoutez cette ligne pour débogage
+        $connecte = $dbx->getUserByCustId($idCust);
+        if($connecte != NULL)
+        {
+            $dbx->changervaleurregistered($result->id);
+        }
+        $dbx->updateLastOrder($IdO, $idCust, $adresse->id, $paiment, "5");
+        echo "updateLastOrder a été exécuté"; // Ajoutez cette ligne pour débogage
+        if($paiment == "cheque"){
+            try {
+                $inscripTemplate = $twig->load('ValiderCheque.twig');
+                echo $inscripTemplate->render();
+            }
+            catch (\Exception $e) {
+                echo "Error: " . $e->getMessage();
+                exit;
+            }}
+        else{
+            try {
+                $inscripTemplate = $twig->load('ValiderPaypal.twig');
+                   echo $inscripTemplate->render();
+            }
+            catch (\Exception $e) {
+                echo "Error: " . $e->getMessage();
+                exit;
+                }
+        }
+
+    } catch (Exception $e) {
+        echo "Error:". $e->getMessage();
+    }
+}
+
+function createfacture()
+{
+    // (c) Xavier Nicolay
+    // Exemple de génération de devis/facture PDF
+ // Assurez-vous de mettre le bon chemin vers votre fichier PDF
+    $dbx = new \App\Model\SelectionModele();
+    $idCust = $_SESSION['id'];
+    $dateActuelle = date("Y-m-d");
+    $custInfo = $dbx->getCustomerInfo($idCust);
+    $custforname = utf8_decode($custInfo->forname);
+    $custsurname = utf8_decode($custInfo->surname);
+    $custadd = utf8_decode($custInfo->add1);
+    $custcp = utf8_decode($custInfo->postcode);
+    $Order = getOrder($_SESSION['id']); // Assurez-vous de remplacer cela par votre fonction réelle
+    $OrderId = $Order->id;
+    $products = $dbx->getItemByOrderId($OrderId);
+    $paiment = utf8_decode($Order->payment_type);
+    ob_start();
+    ob_clean();
+    $pdf = new PDF_Invoice('P', 'mm', 'A4');
+    $pdf->AddPage();
+    $pdf->addSociete("LIVITYSHOP",
+        utf8_decode("15 Bd André Latarjet\n") .
+        utf8_decode("69100 Villeurbanne\n") .
+        "R.C.S. PARIS B 000 000 007\n" .
+        "Capital : ____" . EURO);
+    $pdf->temporaire("Devis temporaire");
+    $pdf->addDate("$dateActuelle");
+    $pdf->addClient("$custforname $custsurname");
+    $pdf->addPageNumber("1");
+    $pdf->addClientAdresse("$custadd\n$custcp");
+    $pdf->addReglement("$paiment");
+    $pdf->addEcheance("$dateActuelle");
+    $pdf->addNumTVA("FR888777666");
+    $cols = array("NOMPRODUIT" => 29,
+        "DESCRIPTION" => 100,
+        "QUANTITE" => 20,
+        "MONTANT" => 41);
+    $pdf->addCols($cols);
+    $cols = array("NOMPRODUIT" => "L",
+        "DESCRIPTION" => "L",
+        "QUANTITE" => "L",
+        "MONTANT" => "R"); // Modification de la position de la colonne MONTANT
+    $pdf->addLineFormat($cols);
+    $pdf->addLineFormat($cols);
+    $y = 109;
+    foreach ($products as $product) {
+        $line = array(
+            "NOMPRODUIT" => $product["name"],
+            "DESCRIPTION" => $product["description"],
+            "QUANTITE" => $product["quantity"],
+            "MONTANT" => $product["price"],
+        );
+        $size = $pdf->addLine($y, $line);
+        $y += $size + 2;
+    }
+
+    $pdf->Output();
+}
+
+function afficherListeCommandes() {
+    global $twig;
+    try {
+        $dbx = new \App\Model\SelectionModele();
+        $lesCommandes = $dbx->getLesCommandesAValider();
+        try {
+            $productsTemplate = $twig->load('InterfaceAdmin.twig');
+            echo $productsTemplate->render(['var1' => $lesCommandes]);
+        }
+        catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+            exit;
+        }
+        render('InterfaceAdmin.twig', null, $lesCommandes);
+    }
+    catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+        exit;
+    }
+}
+
+function afficherDetailCommande() {
+    global $twig;
+    try {
+        $dbx = new \App\Model\SelectionModele();
+        $idOrder = $_GET['id'];
+        $lesProduits = $dbx->getItemByOrderId($idOrder);
+        $unOrder = $dbx->getOrderById($idOrder);
+        $adresse = $dbx->getDeliveryAdressById($unOrder->delivery_add_id);
+        try {
+            $productsTemplate = $twig->load('detailsCommande.twig');
+            echo $productsTemplate->render(['var1' => $lesProduits, 'var2' => $unOrder, 'var3' => $adresse]);
+        }
+        catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+            exit;
+        }
+    }
+    catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+                exit;
+    }
+}
+
+function validerEnvoi() {
+    try {
+        $dbx = new \App\Model\SelectionModele();
+        $idOrder = $_GET['idOrder'];
+        $dbx->changeStatusOrder($idOrder, 10);
+        afficherListeCommandes();
+    }
+    catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+                exit;
+    }
 }

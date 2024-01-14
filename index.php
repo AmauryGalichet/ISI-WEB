@@ -22,6 +22,7 @@ include 'C:\xampp\htdocs\livityshop\Controller.php';
 $url = $_GET['url'] ?? 'accueil';
 $session_id = session_id();
 
+$isAdminConnected = isset($_SESSION['idAdmin']);
     switch ($url) {
         case 'accueil':
             getAccueil($twig);
@@ -61,13 +62,45 @@ $session_id = session_id();
         case 'supprimerPanier':
             supprimerPanier();
             break;
-        
-        case 'paiements':
-            afficherListeCommandes();
-            break;
-        
         case 'Entreprise':
             EntreprisePage($twig);
+            break;
+        case 'ValiderPanier':
+            formValiderPanier1();
+            break;
+        case 'ValiderPanier1':
+            ValiderPanier();
+            break;
+        case 'validerOrder':
+            validerOrder();
+            break;
+        case 'FaireFacture':
+            createfacture();
+            break;
+        case 'commande':
+                // Vérifiez si l'administrateur est connecté
+                if ($isAdminConnected) {
+                    afficherListeCommandes();
+                } else {
+                    // Redirigez l'utilisateur vers une page appropriée en cas d'accès non autorisé
+                    // Vous pouvez personnaliser cette redirection selon vos besoins
+                    header('Location: ?action=notauthorized');
+                    exit;
+                }
+                break;
+        case 'detailsCommande':
+                    // Vérifiez si l'administrateur est connecté
+                    if ($isAdminConnected) {
+                        afficherDetailCommande();
+                    } else {
+                        
+                        
+                        header('Location: ?action=notauthorized');
+                        exit;
+                    }
+                    break;
+        case 'validerEnvoi':
+            validerEnvoi();
             break;
 
 

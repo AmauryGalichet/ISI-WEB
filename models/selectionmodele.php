@@ -32,24 +32,6 @@ class SelectionModele
         }
     }
 
-
-    public function getCategorie()
-    {
-        try {
-            $setup = new Setup();
-            $conn = $setup->getConnexion();
-
-            $sql = "SELECT * FROM categories";
-            $sth = $conn->prepare($sql);
-            $sth->execute();
-
-            return $sth->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            $erreur = $e->getMessage();
-            throw new \Exception("Erreur lors de la récupération des catégories : " . $erreur);
-        }
-    }
-
     public function getProductDetails($productId = null)
     {
         try {
@@ -80,9 +62,7 @@ class SelectionModele
             $setup = new Setup();
             $conn = $setup->getConnexion();
     
-            // Ajoutez cet écho pour voir la valeur de $session_id avant la recherche de commande
-            echo "Session ID before getLastOrderFromSession: " . $session_id . "\n";
-    
+            
             $sql = "SELECT * FROM orders WHERE session = ? ORDER BY date DESC LIMIT 1";
             $sth = $conn->prepare($sql);
             $sth->execute(array($session_id));
@@ -90,9 +70,7 @@ class SelectionModele
             // Utilisez la chaîne de classe complète pour fetchObject en spécifiant la classe Order
             $order = $sth->fetchObject(\App\Model\SelectionModele::class);
     
-            // Ajoutez cet écho pour voir la valeur de $session_id après la recherche de commande
-            echo "Session ID after getLastOrderFromSession: " . $session_id . "\n";
-    
+        
             return $order;
         } catch (PDOException $e) {
             $erreur = $e->getMessage();
@@ -142,9 +120,9 @@ class SelectionModele
             $setup = new Setup();
             $conn = $setup->getConnexion();
     
-            $sql = "INSERT INTO orders(registered, date, status, session) VALUE(1, now(), 0, ?)";
+            $sql = "INSERT INTO orders(customer_id, registered, date, status, session) VALUE(?, 0, now(), 0, ?)";
             $sth = $conn->prepare($sql);
-            $sth->execute(array($session_ID));
+            $sth->execute(array($session_ID,$session_ID));
         } catch (PDOException $e) {
             $erreur = $e->getMessage();
             throw new \Exception($erreur);
@@ -296,18 +274,32 @@ class SelectionModele
         try {
             $setup = new Setup();
             $conn = $setup->getConnexion();
-
-            $sql = "SELECT * FROM admin WHERE username=?";
+    
+            $sql = "SELECT a.*, l.id AS user_id FROM admin a 
+                    LEFT JOIN logins l ON a.username = l.username 
+                    WHERE a.username=?";
             $sth = $conn->prepare($sql);
             $sth->execute(array($username));
+    
             return $sth->fetchObject();
-        }
-        catch (PDOException $e)
-        {
+        } catch (PDOException $e) {
             $erreur = $e->getMessage();
             throw new \Exception($erreur);
         }
     }
+    
+
+    public function loginAdmin($username, $password) {
+        $admin = $this->getUnAdmin($username);
+
+        if ($admin && password_verify($password, $admin->password)) {
+            return $admin;
+        }
+
+        return false;
+    }
+    
+    
 
     function addUser($username, $password) {
         try{
@@ -383,6 +375,255 @@ class SelectionModele
             $sql = "DELETE FROM orders WHERE session=? AND customer_id IS NULL";
             $sth = $conn->prepare($sql);
             $sth->execute(array($session));
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getUserById($id) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT * FROM logins WHERE id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($id));
+            return $sth->fetchObject();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getCustomerInfo($idCustomer) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT *  FROM customers WHERE id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($idCustomer));
+            return $sth->fetchObject();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getLesAdresses($idCustomer) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT * FROM delivery_addresses d JOIN orders o ON d.id = o.delivery_add_id WHERE customer_id = ?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($idCustomer));
+            return $sth->fetchAll();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function ajouterAdresse($prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "INSERT INTO delivery_addresses(firstname, lastname, add1, add2, city, postcode, phone, email) VALUE (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail));
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getLastAdresse() {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT * FROM delivery_addresses ORDER BY id DESC";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array());
+            return $sth->fetchObject();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function updateCustomer($id, $prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "UPDATE customers SET forname=?, surname=?, add1=?, add2=?, add3=?, postcode=?, phone=?, email=? WHERE id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail, $id));
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function createCustomer($prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "INSERT INTO customers(forname, surname, add1, add2, add3, postcode, phone, email, registered) VALUE( ?, ?, ?, ?, ?, ?, ?, ?, 1)";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array( $prenom, $nom, $addr1, $addr2, $addr3, $cp, $tel, $mail));
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function updateLastOrder($Id, $customerId, $idAdresse, $paiment, $statut) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "UPDATE orders SET customer_id = ?, status = ?, delivery_add_id = ?, payment_type = ? WHERE id = ?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($customerId, $statut, $idAdresse, $paiment, $Id));
+          
+        } catch (PDOException $e) {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+
+    function updateLastLogin($Id, $customerId) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "UPDATE logins SET customer_id = ? WHERE id = ?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($customerId, $Id));
+          
+        } catch (PDOException $e) {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getUserByCustId($custId)
+    {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT * FROM logins WHERE customer_id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($custId));
+            return $sth->fetchObject();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    public function changervaleurregistered( $session)
+    {
+        try{
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "UPDATE orders SET registered=? WHERE customer_id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array(1, $session));
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getLesCommandesAValider() {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT * FROM orders WHERE status=5";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array());
+            return $sth->fetchAll();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getOrderById($idOrder) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT * FROM orders WHERE id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($idOrder));
+            return $sth->fetchObject();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function getDeliveryAdressById($idAdresse) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "SELECT * FROM delivery_addresses WHERE id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($idAdresse));
+            return $sth->fetchObject();
+        }
+        catch (PDOException $e)
+        {
+            $erreur = $e->getMessage();
+            throw new \Exception($erreur);
+        }
+    }
+
+    function changeStatusOrder($idOrder, $status) {
+        try {
+            $setup = new Setup();
+            $conn = $setup->getConnexion();
+
+            $sql = "UPDATE orders SET status=? WHERE id=?";
+            $sth = $conn->prepare($sql);
+            $sth->execute(array($status, $idOrder));
         }
         catch (PDOException $e)
         {

@@ -21,7 +21,35 @@
                     <li>{{ productDetails.description }}</li>
                 </ul>
             </div>
-            <button class="buy--btn">ADD TO CART</button>
+            <a button class="ip-add-carti" type="buttoni" id='btn_$idProduit' href='index.php?url=ajouterPanier&idProduit={{ product.id }}&quantity=1'>Add to cart</a>
         </div>
     </section>
+{% endblock %}
+{% block scripts %}
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Get all elements with the class 'product-link'
+    var productLinks = document.querySelectorAll('.product-link');
+
+    // Add a click event listener to each link
+    productLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            // Prevent the default behavior of the link
+            event.preventDefault();
+
+            // Get the value of 'data-product-id'
+            var productId = link.dataset.productId;
+
+            // Now you can use the productId as needed
+            console.log('Product ID:', productId);
+
+            // You can redirect to the product details page with the product ID
+            // Example: window.location.href = 'index.php?url=productDetails&id=' + productId;
+        });
+    });
+});
+</script>
+
+
 {% endblock %}

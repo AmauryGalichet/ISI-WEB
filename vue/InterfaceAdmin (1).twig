@@ -1,0 +1,16 @@
+{% extends 'base.twig' %}
+
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="css/login.css">
+{% endblock %}
+
+
+{% block body %}
+    <h2>Liste des commandes à valider</h2>
+
+    {% for uneCommande in var1 %}
+        {% set idCommande = uneCommande['id'] %}
+        <a href='?url=detailsCommande&id={{ idCommande }}'>Commande No {{ idCommande }}</a><br/><br/>
+    {% endfor %}
+{% endblock %}

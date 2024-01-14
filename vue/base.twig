@@ -27,7 +27,7 @@
 <meta name="theme-color" content="#712cf9">
 
 
-    <style>;
+    <style>
 
  product-image {
  
@@ -464,10 +464,24 @@
           </a></li>
           <li class="nav-item"><a class="nav-link" href="index.php?url=accueil">Accueil</a></li>
           <li class="nav-item"><a class="nav-link" href="index.php?url=produits">Produits</a></li>
-          
+          {% if isAdminConnected %}
+            <li class="nav-item"><a class="nav-link" href="?action=commande">Commandes</a></li>
+          {% endif %}
           <li class="nav-item"><a class="nav-link" href="index.php?url=Entreprise">Entreprise</a></li>
-           <li class="nav-item"><a class="nav-link" href="nav-item"><a class="nav-link" href="index.php?url=connexion">Connexion/Inscription</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">
+                   <!-- Dropdown -->
+<div class="dropdown">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        User 
+    </a>
+    <!-- Dropdown menu -->
+    <div class="dropdown-menu" aria-labelledby="userDropdown">
+        <!-- Logout item -->
+        <a class="dropdown-item" href="?action=deconnexion">Logout</a>
+        <!-- Connexion/Inscription item -->
+        <a class="dropdown-item" href="index.php?url=connexion">Connexion/Inscription</a>
+    </div>
+</div>
+          <li class="nav-item"><a class="nav-link" href="index.php?url=panier">
             <svg class="bi" width="24" height="24"><use xlink:href="#cart"/></svg>
           </a></li>
         </ul>
@@ -482,7 +496,13 @@
 {% endblock %}
 
 {% block javascripts %}
-    
+       <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script src="http://localhost/livityshop/public/js/products.js"></script>
     <script src="http://localhost/livityshop/public/js/login.js"></script>
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.twig' %}
+{% set paiementEffectue = true %} {# Remplacez ceci par votre propre logique de vérification du paiement #}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="css/login.css">
+{% endblock %}
+
+{% block body %}
+
+    {% if paiementEffectue %}
+        {# Si le paiement est effectué, affichez cette partie #}
+        <section class="container">
+            <div>
+                <h2>Votre paiement est validé</h2>
+                <h3>Cliquez <a href="https://www.paypal.com/fr/home">ici</a> ce lien mènerait à la page de paiement PayPal.</h3>
+            </div>
+        </section>
+    {% else %}
+        <a href="index.php?url=FaireFacture" class="bouton" target="_blank">Mon Bouton</a>
+    {% endif %}
+
+{% endblock %}
